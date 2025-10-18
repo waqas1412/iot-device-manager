@@ -6,7 +6,7 @@
 import { WebSocket, WebSocketServer } from 'ws';
 import { Server } from 'http';
 
-import { Logger, APP_CONSTANTS } from '@iot-dm/shared';
+import { Logger } from '@iot-dm/shared';
 
 /**
  * WebSocket Manager
@@ -24,7 +24,7 @@ export class WebSocketManager {
   initialize(server: Server): void {
     this.wss = new WebSocketServer({ server });
 
-    this.wss.on('connection', (ws: WebSocket, req) => {
+    this.wss.on('connection', (ws: WebSocket, _req) => {
       const clientId = this.generateClientId();
       this.clients.set(clientId, ws);
 
@@ -71,7 +71,7 @@ export class WebSocketManager {
   broadcast(data: unknown): void {
     const message = JSON.stringify(data);
 
-    this.clients.forEach((client, clientId) => {
+    this.clients.forEach((client, _clientId) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(message);
       }
@@ -86,7 +86,7 @@ export class WebSocketManager {
   broadcastToRoom(room: string, data: unknown): void {
     // In a real implementation, clients would subscribe to rooms
     // For simplicity, we broadcast to all
-    this.broadcast({ room, ...data });
+    this.broadcast({ room, ...(data as object) });
   }
 
   /**

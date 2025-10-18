@@ -83,7 +83,7 @@ function createApp(): { app: Application; server: Server } {
  */
 async function startServer(): Promise<void> {
   try {
-    const { app, server } = createApp();
+    const { server } = createApp();
 
     // Initialize Pub/Sub after WebSocket
     pubSubService = new PubSubService(wsManager);

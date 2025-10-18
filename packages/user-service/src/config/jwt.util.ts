@@ -5,7 +5,7 @@
 
 import jwt from 'jsonwebtoken';
 
-import { ITokenPayload, IAuthToken, APP_CONSTANTS } from '@iot-dm/shared';
+import { ITokenPayload, IAuthToken, UserRole, APP_CONSTANTS } from '@iot-dm/shared';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 const JWT_REFRESH_SECRET =
@@ -40,7 +40,7 @@ export function generateRefreshToken(payload: Omit<ITokenPayload, 'iat' | 'exp'>
 export function generateTokens(
   userId: string,
   email: string,
-  role: string
+  role: UserRole
 ): IAuthToken {
   const payload: Omit<ITokenPayload, 'iat' | 'exp'> = { userId, email, role };
 
