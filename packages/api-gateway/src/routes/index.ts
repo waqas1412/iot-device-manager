@@ -35,7 +35,6 @@ router.use(
   createProxyMiddleware({
     target: config.services.device,
     changeOrigin: true,
-    logLevel: 'debug',
   })
 );
 
@@ -47,7 +46,6 @@ router.use(
   createProxyMiddleware({
     target: config.services.analytics,
     changeOrigin: true,
-    logLevel: 'debug',
   })
 );
 
@@ -59,7 +57,6 @@ router.use(
   createProxyMiddleware({
     target: config.services.notification,
     changeOrigin: true,
-    logLevel: 'debug',
   })
 );
 
@@ -71,7 +68,6 @@ router.use(
   createProxyMiddleware({
     target: config.services.user,
     changeOrigin: true,
-    logLevel: 'debug',
   })
 );
 
@@ -83,7 +79,6 @@ router.use(
   createProxyMiddleware({
     target: config.services.user,
     changeOrigin: true,
-    logLevel: 'debug',
   })
 );
 
