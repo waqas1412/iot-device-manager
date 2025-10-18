@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # MongoDB database
+  mongodb:
+    image: mongo:8.0
+    container_name: iot-mongodb
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_DATABASE: iot-device-manager
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - iot-network
+
+  # Redis cache and pub/sub
+  redis:
+    image: redis:7.4-alpine
+    container_name: iot-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - iot-network
+
+  # MongoDB Express (optional - for development)
+  mongo-express:
+    image: mongo-express:1.0-20
+    container_name: iot-mongo-express
+    restart: unless-stopped
+    ports:
+      - '8081:8081'
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password123
+      ME_CONFIG_MONGODB_URL: mongodb://admin:password123@mongodb:27017/
+      ME_CONFIG_BASICAUTH: false
+    depends_on:
+      - mongodb
+    networks:
+      - iot-network
+
+  # Redis Commander (optional - for development)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: iot-redis-commander
+    restart: unless-stopped
+    ports:
+      - '8082:8081'
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    depends_on:
+      - redis
+    networks:
+      - iot-network
+
+volumes:
+  mongodb_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  iot-network:
+    driver: bridge
+

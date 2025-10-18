@@ -14,6 +14,7 @@ services:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+      - ./scripts/seed-db.js:/docker-entrypoint-initdb.d/seed-db.js:ro
     networks:
       - iot-network
     healthcheck:
@@ -38,36 +39,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # Management UIs
-  mongo-express:
-    image: mongo-express:latest
-    container_name: iot-mongo-express
-    restart: unless-stopped
-    ports:
-      - "8081:8081"
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
-      ME_CONFIG_MONGODB_ADMINPASSWORD: password123
-      ME_CONFIG_MONGODB_URL: mongodb://admin:password123@mongodb:27017/
-      ME_CONFIG_BASICAUTH: false
-    depends_on:
-      - mongodb
-    networks:
-      - iot-network
-
-  redis-commander:
-    image: rediscommander/redis-commander:latest
-    container_name: iot-redis-commander
-    restart: unless-stopped
-    ports:
-      - "8082:8081"
-    environment:
-      REDIS_HOSTS: local:redis:6379
-    depends_on:
-      - redis
-    networks:
-      - iot-network
-
   # Microservices
   user-service:
     build:
@@ -79,8 +50,8 @@ services:
       NODE_ENV: production
       PORT: 3004
       MONGODB_URI: mongodb://admin:password123@mongodb:27017/iot-device-manager?authSource=admin
-      JWT_SECRET: your-super-secret-jwt-key-min-32-characters-long-please-change-in-production
-      JWT_REFRESH_SECRET: your-super-secret-refresh-key-min-32-characters-long-please-change-in-production
+      JWT_SECRET: your-super-secret-jwt-key-min-32-characters-long
+      JWT_REFRESH_SECRET: your-super-secret-refresh-key-min-32-characters-long
     ports:
       - "3004:3004"
     depends_on:
@@ -179,7 +150,7 @@ services:
     networks:
       - iot-network
 
-  # Database seeder (runs once)
+  # Database seeder (runs once and exits)
   db-seed:
     image: mongo:latest
     container_name: iot-db-seed
@@ -196,15 +167,12 @@ services:
       - iot-network
     command: >
       sh -c "
-        echo '⏳ Waiting for services to be ready...' &&
-        sleep 15 &&
-        echo '🌱 Seeding database...' &&
-        mongosh mongodb://admin:password123@mongodb:27017/iot-device-manager?authSource=admin /scripts/seed-data.js &&
-        echo '✅ Database seeded successfully!'
+        sleep 10 &&
+        mongosh mongodb://admin:password123@mongodb:27017/iot-device-manager?authSource=admin /scripts/seed-data.js
       "
     restart: "no"
 
-  # Device simulator (continuous real-time data)
+  # Device simulator (continuous)
   device-simulator:
     build:
       context: .
@@ -220,7 +188,6 @@ services:
       - api-gateway
       - device-service
       - analytics-service
-      - db-seed
     networks:
       - iot-network
 
