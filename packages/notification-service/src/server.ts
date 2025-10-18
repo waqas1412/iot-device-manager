@@ -34,7 +34,7 @@ function createApp(): { app: Application; server: Server } {
   wsManager.initialize(server);
 
   // Health check
-  app.get('/health', (req, res) => {
+  app.get('/health', (_req, res) => {
     res.json({
       status: 'healthy',
       service: 'notification-service',

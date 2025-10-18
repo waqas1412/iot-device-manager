@@ -17,8 +17,7 @@ export function errorHandler(
   error: Error,
   req: Request,
   res: Response,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  next: NextFunction
+  _next: NextFunction
 ): void {
   logger.error('Error occurred', error, {
     path: req.path,

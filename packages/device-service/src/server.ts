@@ -38,7 +38,7 @@ function createApp(): Application {
   app.use('/devices', createDeviceRoutes(deviceController));
 
   // Health check
-  app.get('/health', (req, res) => {
+  app.get('/health', (_req, res) => {
     res.json({
       status: 'healthy',
       service: 'device-service',

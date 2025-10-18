@@ -30,7 +30,7 @@ function createApp(): Application {
   app.use('/analytics', createAnalyticsRoutes(analyticsController));
 
   // Health check
-  app.get('/health', (req, res) => {
+  app.get('/health', (_req, res) => {
     res.json({
       status: 'healthy',
       service: 'analytics-service',

@@ -16,7 +16,7 @@ const router = Router();
  * Health check endpoint
  * Single Responsibility: Report service health
  */
-router.get('/health', (req, res) => {
+router.get('/health', (_req, res) => {
   res.json(
     ApiResponseUtil.success({
       status: 'healthy',

@@ -35,7 +35,7 @@ function createApp(): Application {
   app.use('/auth', createAuthRoutes(authController));
 
   // Health check
-  app.get('/health', (req, res) => {
+  app.get('/health', (_req, res) => {
     res.json({
       status: 'healthy',
       service: 'user-service',
