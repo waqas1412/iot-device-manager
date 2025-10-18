@@ -15,10 +15,10 @@ export const config = {
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:4200',
 
   services: {
-    device: `http://localhost:${APP_CONSTANTS.PORTS.DEVICE_SERVICE}`,
-    analytics: `http://localhost:${APP_CONSTANTS.PORTS.ANALYTICS_SERVICE}`,
-    notification: `http://localhost:${APP_CONSTANTS.PORTS.NOTIFICATION_SERVICE}`,
-    user: `http://localhost:${APP_CONSTANTS.PORTS.USER_SERVICE}`,
+    device: process.env.DEVICE_SERVICE_URL || `http://device-service:${APP_CONSTANTS.PORTS.DEVICE_SERVICE}`,
+    analytics: process.env.ANALYTICS_SERVICE_URL || `http://analytics-service:${APP_CONSTANTS.PORTS.ANALYTICS_SERVICE}`,
+    notification: process.env.NOTIFICATION_SERVICE_URL || `http://notification-service:${APP_CONSTANTS.PORTS.NOTIFICATION_SERVICE}`,
+    user: process.env.USER_SERVICE_URL || `http://user-service:${APP_CONSTANTS.PORTS.USER_SERVICE}`,
   },
 
   rateLimit: {
