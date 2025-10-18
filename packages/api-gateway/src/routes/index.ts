@@ -3,7 +3,7 @@
  * Demonstrates: Service routing, proxy pattern
  */
 
-import { Router } from 'express';
+import { Router, Request } from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
 import { ApiResponseUtil } from '@iot-dm/shared';
@@ -27,58 +27,30 @@ router.get('/health', (_req, res) => {
 });
 
 /**
- * Proxy to Device Service
- * Demonstrates: Microservices communication
+ * Proxy middleware with dynamic routing
+ * Routes requests to appropriate microservice based on path
  */
 router.use(
-  '/devices',
   createProxyMiddleware({
-    target: config.services.device,
+    target: config.services.device, // Default target
     changeOrigin: true,
-  })
-);
-
-/**
- * Proxy to Analytics Service
- */
-router.use(
-  '/analytics',
-  createProxyMiddleware({
-    target: config.services.analytics,
-    changeOrigin: true,
-  })
-);
-
-/**
- * Proxy to Notification Service
- */
-router.use(
-  '/notifications',
-  createProxyMiddleware({
-    target: config.services.notification,
-    changeOrigin: true,
-  })
-);
-
-/**
- * Proxy to User Service - Users
- */
-router.use(
-  '/users',
-  createProxyMiddleware({
-    target: config.services.user,
-    changeOrigin: true,
-  })
-);
-
-/**
- * Proxy to User Service - Auth
- */
-router.use(
-  '/auth',
-  createProxyMiddleware({
-    target: config.services.user,
-    changeOrigin: true,
+    router: (req: Request) => {
+      // Route to appropriate service based on path
+      if (req.path.startsWith('/devices')) {
+        return config.services.device;
+      }
+      if (req.path.startsWith('/analytics')) {
+        return config.services.analytics;
+      }
+      if (req.path.startsWith('/notifications')) {
+        return config.services.notification;
+      }
+      if (req.path.startsWith('/users') || req.path.startsWith('/auth')) {
+        return config.services.user;
+      }
+      // Default to device service
+      return config.services.device;
+    },
   })
 );
 
