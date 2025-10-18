@@ -1,0 +1,31 @@
+{
+  "name": "@iot-dm/device-service",
+  "version": "1.0.0",
+  "description": "Device Management Service",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "clean": "rm -rf dist"
+  },
+  "keywords": ["device-service", "microservices"],
+  "author": "waqas1412",
+  "license": "MIT",
+  "dependencies": {
+    "@iot-dm/shared": "*",
+    "express": "^4.21.2",
+    "mongoose": "^8.9.3",
+    "dotenv": "^16.4.7",
+    "uuid": "^11.0.5"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/uuid": "^10.0.0",
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}
+
