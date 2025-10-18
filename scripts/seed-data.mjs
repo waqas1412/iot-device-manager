@@ -34,17 +34,25 @@ async function seedDatabase() {
     const users = [
       {
         email: 'admin@iot.com',
+        username: 'admin',
         password: adminPassword,
-        name: 'Admin User',
         role: 'admin',
+        profile: {
+          firstName: 'Admin',
+          lastName: 'User',
+        },
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         email: 'user@iot.com',
+        username: 'user',
         password: userPassword,
-        name: 'Regular User',
         role: 'user',
+        profile: {
+          firstName: 'Regular',
+          lastName: 'User',
+        },
         createdAt: new Date(),
         updatedAt: new Date(),
       },
