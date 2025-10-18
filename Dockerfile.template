@@ -1,0 +1,53 @@
+# Multi-stage build for Node.js microservices
+FROM node:24-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+COPY packages/shared/package*.json ./packages/shared/
+
+# Install dependencies
+RUN npm ci
+
+# Copy shared package
+COPY packages/shared ./packages/shared
+
+# Build shared package
+RUN npm run build --workspace=packages/shared
+
+# Copy service files
+ARG SERVICE_NAME
+COPY packages/${SERVICE_NAME} ./packages/${SERVICE_NAME}
+
+# Build service
+RUN npm run build --workspace=packages/${SERVICE_NAME}
+
+# Production stage
+FROM node:24-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+COPY packages/shared/package*.json ./packages/shared/
+
+ARG SERVICE_NAME
+COPY packages/${SERVICE_NAME}/package*.json ./packages/${SERVICE_NAME}/
+
+# Install production dependencies only
+RUN npm ci --production
+
+# Copy built files
+COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
+COPY --from=builder /app/packages/${SERVICE_NAME}/dist ./packages/${SERVICE_NAME}/dist
+
+# Set environment
+ENV NODE_ENV=production
+
+# Expose port (will be overridden by service-specific Dockerfile)
+EXPOSE 3000
+
+# Start service
+CMD ["node", "packages/${SERVICE_NAME}/dist/server.js"]
+
