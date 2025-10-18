@@ -63,7 +63,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction): v
  * Demonstrates: Role-based access control (RBAC)
  */
 export function authorize(...allowedRoles: UserRole[]) {
-  return (req: Request, res: Response, next: NextFunction): void => {
+  return (req: Request, _res: Response, next: NextFunction): void => {
     if (!req.user) {
       next(new AuthenticationError('Not authenticated'));
       return;

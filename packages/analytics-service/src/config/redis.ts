@@ -9,13 +9,13 @@ import { APP_CONSTANTS, Logger } from '@iot-dm/shared';
 
 const logger = new Logger('Redis');
 
-let redisClient: RedisClientType | null = null;
+let redisClient: ReturnType<typeof createClient> | null = null;
 
 /**
  * Connect to Redis
  * Single Responsibility: Manage Redis connection lifecycle
  */
-export async function connectRedis(): Promise<RedisClientType> {
+export async function connectRedis(): Promise<ReturnType<typeof createClient>> {
   try {
     const client = createClient({
       url: APP_CONSTANTS.DATABASE.REDIS_URI,
@@ -46,7 +46,7 @@ export async function connectRedis(): Promise<RedisClientType> {
 /**
  * Get Redis client
  */
-export function getRedisClient(): RedisClientType {
+export function getRedisClient(): ReturnType<typeof createClient> {
   if (!redisClient) {
     throw new Error('Redis client not initialized');
   }

@@ -42,7 +42,7 @@ export function generateTokens(
   email: string,
   role: string
 ): IAuthToken {
-  const payload = { userId, email, role };
+  const payload: Omit<ITokenPayload, 'iat' | 'exp'> = { userId, email, role };
 
   const accessToken = generateAccessToken(payload);
   const refreshToken = generateRefreshToken(payload);
