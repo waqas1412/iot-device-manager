@@ -8,7 +8,7 @@ COPY packages/shared/package*.json ./packages/shared/
 COPY packages/api-gateway/package*.json ./packages/api-gateway/
 
 # Install dependencies
-RUN npm ci
+RUN npm install
 
 # Copy source files
 COPY packages/shared ./packages/shared
@@ -32,7 +32,7 @@ COPY packages/shared/package*.json ./packages/shared/
 COPY packages/api-gateway/package*.json ./packages/api-gateway/
 
 # Install production dependencies only
-RUN npm ci --production --workspace=packages/shared --workspace=packages/api-gateway
+RUN npm install --production --workspace=packages/shared --workspace=packages/api-gateway
 
 # Copy built files
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist

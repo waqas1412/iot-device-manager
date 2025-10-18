@@ -1,0 +1,189 @@
+version: '3.8'
+
+services:
+  # Infrastructure
+  mongodb:
+    image: mongo:latest
+    container_name: iot-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_DATABASE: iot-device-manager
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - iot-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:alpine
+    container_name: iot-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - iot-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Management UIs
+  mongo-express:
+    image: mongo-express:latest
+    container_name: iot-mongo-express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password123
+      ME_CONFIG_MONGODB_URL: mongodb://admin:password123@mongodb:27017/
+      ME_CONFIG_BASICAUTH: false
+    depends_on:
+      - mongodb
+    networks:
+      - iot-network
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: iot-redis-commander
+    restart: unless-stopped
+    ports:
+      - "8082:8081"
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    depends_on:
+      - redis
+    networks:
+      - iot-network
+
+  # Microservices
+  user-service:
+    build:
+      context: .
+      dockerfile: packages/user-service/Dockerfile
+    container_name: iot-user-service
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3004
+      MONGODB_URI: mongodb://admin:password123@mongodb:27017/iot-device-manager?authSource=admin
+      JWT_SECRET: your-super-secret-jwt-key-min-32-characters-long-please-change-in-production
+      JWT_REFRESH_SECRET: your-super-secret-refresh-key-min-32-characters-long-please-change-in-production
+    ports:
+      - "3004:3004"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - iot-network
+
+  device-service:
+    build:
+      context: .
+      dockerfile: packages/device-service/Dockerfile
+    container_name: iot-device-service
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      MONGODB_URI: mongodb://admin:password123@mongodb:27017/iot-device-manager?authSource=admin
+    ports:
+      - "3001:3001"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - iot-network
+
+  analytics-service:
+    build:
+      context: .
+      dockerfile: packages/analytics-service/Dockerfile
+    container_name: iot-analytics-service
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3002
+      REDIS_URI: redis://redis:6379
+    ports:
+      - "3002:3002"
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - iot-network
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: packages/notification-service/Dockerfile
+    container_name: iot-notification-service
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3003
+      REDIS_URI: redis://redis:6379
+    ports:
+      - "3003:3003"
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - iot-network
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: packages/api-gateway/Dockerfile
+    container_name: iot-api-gateway
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DEVICE_SERVICE_URL: http://device-service:3001
+      USER_SERVICE_URL: http://user-service:3004
+      ANALYTICS_SERVICE_URL: http://analytics-service:3002
+      NOTIFICATION_SERVICE_URL: http://notification-service:3003
+    ports:
+      - "3000:3000"
+    depends_on:
+      - device-service
+      - user-service
+      - analytics-service
+      - notification-service
+    networks:
+      - iot-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: packages/frontend/Dockerfile
+    container_name: iot-frontend
+    restart: unless-stopped
+    ports:
+      - "4200:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - iot-network
+
+networks:
+  iot-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  redis_data:
+

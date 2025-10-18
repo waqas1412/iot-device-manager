@@ -5,7 +5,7 @@ WORKDIR /app
 COPY tools/device-simulator/package*.json ./
 COPY tools/device-simulator/tsconfig.json ./
 
-RUN npm ci
+RUN npm install
 
 COPY tools/device-simulator/src ./src
 

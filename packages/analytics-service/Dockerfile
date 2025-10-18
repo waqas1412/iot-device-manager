@@ -6,7 +6,7 @@ COPY package*.json ./
 COPY packages/shared/package*.json ./packages/shared/
 COPY packages/analytics-service/package*.json ./packages/analytics-service/
 
-RUN npm ci
+RUN npm install
 
 COPY packages/shared ./packages/shared
 COPY packages/analytics-service ./packages/analytics-service
@@ -23,7 +23,7 @@ COPY package*.json ./
 COPY packages/shared/package*.json ./packages/shared/
 COPY packages/analytics-service/package*.json ./packages/analytics-service/
 
-RUN npm ci --production --workspace=packages/shared --workspace=packages/analytics-service
+RUN npm install --production --workspace=packages/shared --workspace=packages/analytics-service
 
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
 COPY --from=builder /app/packages/analytics-service/dist ./packages/analytics-service/dist

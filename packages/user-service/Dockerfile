@@ -6,7 +6,7 @@ COPY package*.json ./
 COPY packages/shared/package*.json ./packages/shared/
 COPY packages/user-service/package*.json ./packages/user-service/
 
-RUN npm ci
+RUN npm install
 
 COPY packages/shared ./packages/shared
 COPY packages/user-service ./packages/user-service
@@ -23,7 +23,7 @@ COPY package*.json ./
 COPY packages/shared/package*.json ./packages/shared/
 COPY packages/user-service/package*.json ./packages/user-service/
 
-RUN npm ci --production --workspace=packages/shared --workspace=packages/user-service
+RUN npm install --production --workspace=packages/shared --workspace=packages/user-service
 
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
 COPY --from=builder /app/packages/user-service/dist ./packages/user-service/dist

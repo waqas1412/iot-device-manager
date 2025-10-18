@@ -6,7 +6,7 @@ COPY package*.json ./
 COPY packages/shared/package*.json ./packages/shared/
 COPY packages/device-service/package*.json ./packages/device-service/
 
-RUN npm ci
+RUN npm install
 
 COPY packages/shared ./packages/shared
 COPY packages/device-service ./packages/device-service
@@ -23,7 +23,7 @@ COPY package*.json ./
 COPY packages/shared/package*.json ./packages/shared/
 COPY packages/device-service/package*.json ./packages/device-service/
 
-RUN npm ci --production --workspace=packages/shared --workspace=packages/device-service
+RUN npm install --production --workspace=packages/shared --workspace=packages/device-service
 
 COPY --from=builder /app/packages/shared/dist ./packages/shared/dist
 COPY --from=builder /app/packages/device-service/dist ./packages/device-service/dist
