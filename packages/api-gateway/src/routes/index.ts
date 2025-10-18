@@ -31,12 +31,12 @@ router.get('/health', (_req, res) => {
  * Demonstrates: Microservices communication
  */
 router.use(
-  '/api/devices',
+  '/devices',
   createProxyMiddleware({
     target: config.services.device,
     changeOrigin: true,
     pathRewrite: {
-      '^/api/devices': '/devices',
+      '^/devices': '/devices',
     },
   })
 );
@@ -45,12 +45,12 @@ router.use(
  * Proxy to Analytics Service
  */
 router.use(
-  '/api/analytics',
+  '/analytics',
   createProxyMiddleware({
     target: config.services.analytics,
     changeOrigin: true,
     pathRewrite: {
-      '^/api/analytics': '/analytics',
+      '^/analytics': '/analytics',
     },
   })
 );
@@ -59,12 +59,12 @@ router.use(
  * Proxy to Notification Service
  */
 router.use(
-  '/api/notifications',
+  '/notifications',
   createProxyMiddleware({
     target: config.services.notification,
     changeOrigin: true,
     pathRewrite: {
-      '^/api/notifications': '/notifications',
+      '^/notifications': '/notifications',
     },
   })
 );
@@ -73,23 +73,23 @@ router.use(
  * Proxy to User Service
  */
 router.use(
-  '/api/users',
+  '/users',
   createProxyMiddleware({
     target: config.services.user,
     changeOrigin: true,
     pathRewrite: {
-      '^/api/users': '/users',
+      '^/users': '/users',
     },
   })
 );
 
 router.use(
-  '/api/auth',
+  '/auth',
   createProxyMiddleware({
     target: config.services.user,
     changeOrigin: true,
     pathRewrite: {
-      '^/api/auth': '/auth',
+      '^/auth': '/auth',
     },
   })
 );
