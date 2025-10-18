@@ -53,15 +53,19 @@ router.use(
       // Default to device service
       return config.services.device;
     },
-    onError: (err, req, res) => {
-      console.error('Proxy error:', err.message, 'for', req.path);
-      res.status(502).json({
-        success: false,
-        error: {
-          code: 'PROXY_ERROR',
-          message: 'Service temporarily unavailable',
-        },
-      });
+    on: {
+      error: (err: Error, req: Request, res: any) => {
+        console.error('Proxy error:', err.message, 'for', req.path);
+        if (!res.headersSent) {
+          res.status(502).json({
+            success: false,
+            error: {
+              code: 'PROXY_ERROR',
+              message: 'Service temporarily unavailable',
+            },
+          });
+        }
+      },
     },
   })
 );
