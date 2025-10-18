@@ -34,6 +34,8 @@ router.use(
   createProxyMiddleware({
     target: config.services.device, // Default target
     changeOrigin: true,
+    timeout: 30000, // 30 second timeout
+    proxyTimeout: 30000,
     router: (req: Request) => {
       // Route to appropriate service based on path
       if (req.path.startsWith('/devices')) {
@@ -50,6 +52,16 @@ router.use(
       }
       // Default to device service
       return config.services.device;
+    },
+    onError: (err, req, res) => {
+      console.error('Proxy error:', err.message, 'for', req.path);
+      res.status(502).json({
+        success: false,
+        error: {
+          code: 'PROXY_ERROR',
+          message: 'Service temporarily unavailable',
+        },
+      });
     },
   })
 );
