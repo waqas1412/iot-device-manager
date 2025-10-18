@@ -1,0 +1,46 @@
+{
+  "name": "iot-device-manager",
+  "version": "1.0.0",
+  "description": "IoT Device Management System with Microservices Architecture",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:gateway\" \"npm run dev:device\" \"npm run dev:analytics\" \"npm run dev:notification\" \"npm run dev:user\"",
+    "dev:gateway": "npm run dev --workspace=packages/api-gateway",
+    "dev:device": "npm run dev --workspace=packages/device-service",
+    "dev:analytics": "npm run dev --workspace=packages/analytics-service",
+    "dev:notification": "npm run dev --workspace=packages/notification-service",
+    "dev:user": "npm run dev --workspace=packages/user-service",
+    "dev:frontend": "npm run dev --workspace=packages/frontend",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "lint": "npm run lint --workspaces",
+    "format": "prettier --write \"packages/**/*.{ts,tsx,json,md}\"",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
+  },
+  "keywords": [
+    "iot",
+    "microservices",
+    "nodejs",
+    "angular",
+    "typescript",
+    "mongodb",
+    "redis"
+  ],
+  "author": "waqas1412",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "concurrently": "^9.1.2",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=24.0.0",
+    "npm": ">=11.0.0"
+  }
+}
+
