@@ -14,12 +14,16 @@
     "dev:notification": "npm run dev --workspace=packages/notification-service",
     "dev:user": "npm run dev --workspace=packages/user-service",
     "dev:frontend": "npm run dev --workspace=packages/frontend",
+    "dev:simulator": "cd tools/device-simulator && npm run dev",
     "build": "npm run build --workspaces",
+    "build:shared": "npm run build --workspace=packages/shared",
     "test": "npm run test --workspaces",
     "lint": "npm run lint --workspaces",
     "format": "prettier --write \"packages/**/*.{ts,tsx,json,md}\"",
+    "clean": "npm run clean --workspaces",
     "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down"
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f"
   },
   "keywords": [
     "iot",
@@ -28,7 +32,10 @@
     "angular",
     "typescript",
     "mongodb",
-    "redis"
+    "redis",
+    "websocket",
+    "solid-principles",
+    "design-patterns"
   ],
   "author": "waqas1412",
   "license": "MIT",
