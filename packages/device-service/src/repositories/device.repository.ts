@@ -53,7 +53,7 @@ export class DeviceRepository implements IDeviceRepository {
     const { page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'desc' } = query;
 
     const skip = (page - 1) * limit;
-    const sort = { [sortBy]: sortOrder === 'asc' ? 1 : -1 };
+    const sort: any = { [sortBy]: sortOrder === 'asc' ? 1 : -1 };
 
     const [devices, total] = await Promise.all([
       DeviceModel.find({ userId }).sort(sort).skip(skip).limit(limit).lean(),
@@ -61,7 +61,7 @@ export class DeviceRepository implements IDeviceRepository {
     ]);
 
     return {
-      devices: devices.map((device) => this.transformDocument(device)),
+      devices: devices.map((device) => this.transformDocument(device as any)),
       total,
     };
   }
