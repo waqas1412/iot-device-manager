@@ -72,7 +72,7 @@ import { AuthService } from '../../core/services/auth.service';
                   <p><strong>Type:</strong> {{ device.type }}</p>
                   <p><strong>ID:</strong> {{ device.id }}</p>
                   @if (device.metadata?.manufacturer) {
-                    <p><strong>Manufacturer:</strong> {{ device.metadata.manufacturer }}</p>
+                    <p><strong>Manufacturer:</strong> {{ device.metadata?.manufacturer }}</p>
                   }
                   @if (device.lastSeenAt) {
                     <p><strong>Last Seen:</strong> {{ formatDate(device.lastSeenAt) }}</p>
