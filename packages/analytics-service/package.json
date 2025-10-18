@@ -1,0 +1,29 @@
+{
+  "name": "@iot-dm/analytics-service",
+  "version": "1.0.0",
+  "description": "Analytics and Metrics Service with Redis Caching",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "clean": "rm -rf dist"
+  },
+  "keywords": ["analytics-service", "redis", "microservices"],
+  "author": "waqas1412",
+  "license": "MIT",
+  "dependencies": {
+    "@iot-dm/shared": "*",
+    "express": "^4.21.2",
+    "redis": "^4.7.0",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}
+
