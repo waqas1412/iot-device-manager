@@ -35,9 +35,7 @@ router.use(
   createProxyMiddleware({
     target: config.services.device,
     changeOrigin: true,
-    pathRewrite: {
-      '^/devices': '/devices',
-    },
+    logLevel: 'debug',
   })
 );
 
@@ -49,9 +47,7 @@ router.use(
   createProxyMiddleware({
     target: config.services.analytics,
     changeOrigin: true,
-    pathRewrite: {
-      '^/analytics': '/analytics',
-    },
+    logLevel: 'debug',
   })
 );
 
@@ -63,34 +59,31 @@ router.use(
   createProxyMiddleware({
     target: config.services.notification,
     changeOrigin: true,
-    pathRewrite: {
-      '^/notifications': '/notifications',
-    },
+    logLevel: 'debug',
   })
 );
 
 /**
- * Proxy to User Service
+ * Proxy to User Service - Users
  */
 router.use(
   '/users',
   createProxyMiddleware({
     target: config.services.user,
     changeOrigin: true,
-    pathRewrite: {
-      '^/users': '/users',
-    },
+    logLevel: 'debug',
   })
 );
 
+/**
+ * Proxy to User Service - Auth
+ */
 router.use(
   '/auth',
   createProxyMiddleware({
     target: config.services.user,
     changeOrigin: true,
-    pathRewrite: {
-      '^/auth': '/auth',
-    },
+    logLevel: 'debug',
   })
 );
 

@@ -1,0 +1,10 @@
+{
+  "name": "iot-db-seed",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "mongodb": "^6.11.0",
+    "bcrypt": "^5.1.1"
+  }
+}
+

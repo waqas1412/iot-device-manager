@@ -181,8 +181,9 @@ services:
 
   # Database seeder (runs once)
   db-seed:
-    image: mongo:latest
+    image: node:24-alpine
     container_name: iot-db-seed
+    working_dir: /scripts
     depends_on:
       mongodb:
         condition: service_healthy
@@ -194,12 +195,16 @@ services:
       - ./scripts:/scripts
     networks:
       - iot-network
+    environment:
+      MONGODB_URI: mongodb://admin:password123@mongodb:27017/iot-device-manager?authSource=admin
     command: >
       sh -c "
         echo '⏳ Waiting for services to be ready...' &&
         sleep 15 &&
+        echo '📦 Installing dependencies...' &&
+        npm install --silent &&
         echo '🌱 Seeding database...' &&
-        mongosh mongodb://admin:password123@mongodb:27017/iot-device-manager?authSource=admin /scripts/seed-data.js &&
+        node seed-data.mjs &&
         echo '✅ Database seeded successfully!'
       "
     restart: "no"
