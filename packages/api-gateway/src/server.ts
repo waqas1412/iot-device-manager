@@ -54,7 +54,7 @@ function createApp(): Application {
   });
 
   // Routes
-  app.use('/api', routes);
+  app.use(routes);
 
   // Error handling
   app.use(notFoundHandler);
