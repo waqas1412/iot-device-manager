@@ -70,8 +70,8 @@ async function seedDatabase() {
     // Create users
     console.log('👥 Creating users...');
     
-    const adminPassword = await bcrypt.hash('admin123', 10);
-    const userPassword = await bcrypt.hash('user123', 10);
+    const adminPassword = await bcrypt.hash('Admin@123', 10);
+    const userPassword = await bcrypt.hash('User@123', 10);
     
     const users = [
       {
@@ -154,8 +154,8 @@ async function seedDatabase() {
     console.log(`   - Users: ${userResult.insertedCount}`);
     console.log(`   - Devices: ${deviceResult.insertedCount}`);
     console.log(`\n🔑 Login credentials:`);
-    console.log(`   Admin: admin@iot.com / admin123`);
-    console.log(`   User: user@iot.com / user123`);
+    console.log(`   Admin: admin@iot.com / Admin@123`);
+    console.log(`   User: user@iot.com / User@123`);
     
   } catch (error) {
     console.error('❌ Error seeding database:', error);

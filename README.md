@@ -414,8 +414,8 @@ This will:
 - Redis Commander: http://localhost:8082
 
 **Login Credentials:**
-- Admin: `admin@iot.com` / `admin123`
-- User: `user@iot.com` / `user123`
+- Admin: `admin@iot.com` / `Admin@123`
+- User: `user@iot.com` / `User@123`
 
 **Pre-seeded Data:**
 - 2 users (admin and regular user)
