@@ -6,10 +6,12 @@
 import express, { Application } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
 
 import { Logger } from '@iot-dm/shared';
 
 import { config } from './config/index.js';
+import { swaggerSpec } from './config/swagger.js';
 import { errorHandler, notFoundHandler, rateLimiter, requestLogger } from './middleware/index.js';
 import routes from './routes/index.js';
 
@@ -38,6 +40,18 @@ function createApp(): Application {
   // Custom middleware
   app.use(requestLogger);
   app.use(rateLimiter);
+
+  // Swagger API Documentation
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'IoT Device Manager API',
+  }));
+
+  // Swagger JSON
+  app.get('/api-docs.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swaggerSpec);
+  });
 
   // Routes
   app.use(routes);
