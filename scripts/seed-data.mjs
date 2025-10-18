@@ -1,5 +1,5 @@
 /**
- * Database seeding script
+ * Database seeding script with retry logic
  * Run with: node seed-data.mjs
  */
 
@@ -7,17 +7,59 @@ import { MongoClient } from 'mongodb';
 import bcrypt from 'bcrypt';
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://admin:password123@mongodb:27017/iot-device-manager?authSource=admin';
+const MAX_RETRIES = 10;
+const RETRY_DELAY = 3000; // 3 seconds
+
+/**
+ * Wait for specified milliseconds
+ */
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Connect to MongoDB with retry logic
+ */
+async function connectWithRetry() {
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      console.log(`🔌 Connection attempt ${attempt}/${MAX_RETRIES}...`);
+      const client = new MongoClient(MONGODB_URI, {
+        serverSelectionTimeoutMS: 5000,
+        connectTimeoutMS: 10000,
+      });
+      await client.connect();
+      console.log('✅ Connected to MongoDB successfully');
+      return client;
+    } catch (error) {
+      console.log(`⚠️  Connection attempt ${attempt} failed: ${error.message}`);
+      
+      if (attempt === MAX_RETRIES) {
+        console.error('❌ Max retries reached. Could not connect to MongoDB.');
+        throw error;
+      }
+      
+      console.log(`⏳ Waiting ${RETRY_DELAY / 1000} seconds before retry...`);
+      await sleep(RETRY_DELAY);
+    }
+  }
+}
 
 async function seedDatabase() {
   console.log('🌱 Starting database seeding...');
+  console.log(`📍 MongoDB URI: ${MONGODB_URI.replace(/:[^:@]+@/, ':****@')}`);
   
-  const client = new MongoClient(MONGODB_URI);
+  let client;
   
   try {
-    await client.connect();
-    console.log('✅ Connected to MongoDB');
+    // Connect with retry logic
+    client = await connectWithRetry();
     
     const db = client.db('iot-device-manager');
+    
+    // Verify connection
+    await db.admin().ping();
+    console.log('✅ Database connection verified');
     
     // Clear existing data
     console.log('🗑️  Clearing existing data...');
@@ -117,12 +159,19 @@ async function seedDatabase() {
     
   } catch (error) {
     console.error('❌ Error seeding database:', error);
+    console.error('Stack trace:', error.stack);
     process.exit(1);
   } finally {
-    await client.close();
-    console.log('\n✅ Database connection closed');
+    if (client) {
+      await client.close();
+      console.log('\n✅ Database connection closed');
+    }
   }
 }
 
-seedDatabase();
+// Run the seeding
+seedDatabase().catch(error => {
+  console.error('❌ Fatal error:', error);
+  process.exit(1);
+});
 
