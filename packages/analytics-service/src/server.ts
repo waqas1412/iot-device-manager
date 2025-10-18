@@ -3,6 +3,7 @@
  */
 
 import express, { Application } from 'express';
+import cors from 'cors';
 import dotenv from 'dotenv';
 
 import { Logger, APP_CONSTANTS } from '@iot-dm/shared';
@@ -19,6 +20,7 @@ const logger = new Logger('AnalyticsService');
 function createApp(): Application {
   const app = express();
 
+  app.use(cors({ origin: '*' }));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 

@@ -10,22 +10,26 @@
     "start": "node dist/server.js",
     "clean": "rm -rf dist"
   },
-  "keywords": ["device-service", "microservices"],
+  "keywords": [
+    "device-service",
+    "microservices"
+  ],
   "author": "waqas1412",
   "license": "MIT",
   "dependencies": {
     "@iot-dm/shared": "*",
+    "@types/cors": "^2.8.19",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "mongoose": "^8.9.3",
-    "dotenv": "^16.4.7",
     "uuid": "^11.0.5"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
-    "@types/uuid": "^10.0.0",
     "@types/node": "^22.10.2",
+    "@types/uuid": "^10.0.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   }
 }
-

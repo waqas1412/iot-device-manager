@@ -10,22 +10,28 @@
     "start": "node dist/server.js",
     "clean": "rm -rf dist"
   },
-  "keywords": ["notification-service", "websocket", "redis", "pubsub"],
+  "keywords": [
+    "notification-service",
+    "websocket",
+    "redis",
+    "pubsub"
+  ],
   "author": "waqas1412",
   "license": "MIT",
   "dependencies": {
     "@iot-dm/shared": "*",
+    "@types/cors": "^2.8.19",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "ws": "^8.18.0",
     "redis": "^4.7.0",
-    "dotenv": "^16.4.7"
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
-    "@types/ws": "^8.5.13",
     "@types/node": "^22.10.2",
+    "@types/ws": "^8.5.13",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   }
 }
-

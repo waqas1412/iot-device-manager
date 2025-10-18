@@ -5,6 +5,7 @@
 
 import express, { Application } from 'express';
 import { createServer, Server } from 'http';
+import cors from 'cors';
 import dotenv from 'dotenv';
 
 import { Logger, APP_CONSTANTS, ApiResponseUtil } from '@iot-dm/shared';
@@ -26,6 +27,7 @@ function createApp(): { app: Application; server: Server } {
   const app = express();
   const server = createServer(app);
 
+  app.use(cors({ origin: '*' }));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
