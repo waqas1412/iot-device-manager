@@ -1,0 +1,33 @@
+{
+  "name": "@iot-dm/api-gateway",
+  "version": "1.0.0",
+  "description": "API Gateway for IoT Device Manager",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "clean": "rm -rf dist"
+  },
+  "keywords": ["api-gateway", "microservices"],
+  "author": "waqas1412",
+  "license": "MIT",
+  "dependencies": {
+    "@iot-dm/shared": "*",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "cors": "^2.8.5",
+    "http-proxy-middleware": "^3.0.3",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/cors": "^2.8.17",
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}
+
