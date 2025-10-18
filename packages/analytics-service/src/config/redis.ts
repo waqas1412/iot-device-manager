@@ -3,7 +3,7 @@
  * Demonstrates: Redis client setup, caching layer
  */
 
-import { createClient, RedisClientType } from 'redis';
+import { createClient } from 'redis';
 
 import { APP_CONSTANTS, Logger } from '@iot-dm/shared';
 

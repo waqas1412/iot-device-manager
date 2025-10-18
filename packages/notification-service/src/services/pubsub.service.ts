@@ -3,7 +3,7 @@
  * Demonstrates: Pub/Sub pattern, event-driven architecture, microservices communication
  */
 
-import { createClient, RedisClientType } from 'redis';
+import { createClient } from 'redis';
 
 import { APP_CONSTANTS, Logger } from '@iot-dm/shared';
 
@@ -14,8 +14,8 @@ import { WebSocketManager } from '../websocket/websocket-manager.js';
  * Single Responsibility: Handle Redis pub/sub for inter-service communication
  */
 export class PubSubService {
-  private publisher: RedisClientType | null = null;
-  private subscriber: RedisClientType | null = null;
+  private publisher: ReturnType<typeof createClient> | null = null;
+  private subscriber: ReturnType<typeof createClient> | null = null;
   private logger = new Logger('PubSubService');
 
   constructor(private wsManager: WebSocketManager) {}
