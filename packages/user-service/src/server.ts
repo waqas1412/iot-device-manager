@@ -3,6 +3,7 @@
  */
 
 import express, { Application } from 'express';
+import cors from 'cors';
 import dotenv from 'dotenv';
 
 import { Logger, APP_CONSTANTS } from '@iot-dm/shared';
@@ -22,6 +23,13 @@ const logger = new Logger('UserService');
  */
 function createApp(): Application {
   const app = express();
+
+  // CORS middleware
+  app.use(cors({
+    origin: '*', // Allow all origins (API Gateway will handle CORS)
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  }));
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
