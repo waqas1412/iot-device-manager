@@ -2,14 +2,20 @@ FROM node:24-alpine
 
 WORKDIR /app
 
-COPY tools/device-simulator/package*.json ./
-COPY tools/device-simulator/tsconfig.json ./
+# Copy root package files and tsconfig
+COPY package*.json tsconfig.json ./
 
-RUN npm install
+# Copy simulator files
+COPY tools/device-simulator ./tools/device-simulator
 
-COPY tools/device-simulator/src ./src
+# Install dependencies
+RUN cd tools/device-simulator && npm install
 
-RUN npm run build
+# Build TypeScript
+RUN cd tools/device-simulator && npm run build
+
+# Set working directory to simulator
+WORKDIR /app/tools/device-simulator
 
 ENV NODE_ENV=production
 
