@@ -391,15 +391,38 @@ npm run build
 npm start
 ```
 
-### Docker Deployment
+### 🐳 Docker Deployment (Recommended)
+
+**Single Command Deployment** - Start the entire system with one command:
 
 ```bash
-# Build Docker images
-docker-compose build
-
-# Start all services
-docker-compose up -d
+docker-compose up --build
 ```
+
+This will:
+- ✅ Build all Docker images
+- ✅ Start 12 containers (5 microservices + MongoDB + Redis + Frontend + Management UIs + Seed + Simulator)
+- ✅ Seed database with 2 users and 45 devices
+- ✅ Start device simulator for real-time updates
+- ✅ Configure networking automatically
+
+**Access Points:**
+- Frontend: http://localhost:4200
+- API Gateway: http://localhost:3000
+- Swagger Docs: http://localhost:3000/api-docs
+- MongoDB Express: http://localhost:8081 (admin/password123)
+- Redis Commander: http://localhost:8082
+
+**Login Credentials:**
+- Admin: `admin@iot.com` / `admin123`
+- User: `user@iot.com` / `user123`
+
+**Pre-seeded Data:**
+- 2 users (admin and regular user)
+- 45 IoT devices with realistic data
+- Various device types: temperature, humidity, actuator, gateway, controller
+- Device statuses: online, offline, error
+- Real-time simulator updates every 5 seconds
 
 ## 📚 Key Learning Demonstrations
 
