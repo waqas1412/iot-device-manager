@@ -9,55 +9,79 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../../core/services/auth.service';
+import { ButtonComponent } from '../../shared/components/button/button.component';
+import { InputComponent } from '../../shared/components/input/input.component';
+import { CardComponent } from '../../shared/components/card/card.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ButtonComponent, InputComponent, CardComponent],
   template: `
     <div class="login-container">
-      <div class="login-card">
-        <h1>IoT Device Manager</h1>
-        <h2>Login</h2>
+      <div class="login-background">
+        <div class="floating-shapes">
+          <div class="shape shape-1"></div>
+          <div class="shape shape-2"></div>
+          <div class="shape shape-3"></div>
+        </div>
+      </div>
+      
+      <app-card class="login-card" [glass]="true" [glow]="true">
+        <div class="login-header">
+          <div class="logo">
+            <div class="logo-icon">⚡</div>
+            <h1 class="gradient-text">IoT Nexus</h1>
+          </div>
+          <p class="login-subtitle">Connect to the future of device management</p>
+        </div>
 
         @if (error()) {
-          <div class="error-message">{{ error() }}</div>
+          <div class="error-message">
+            <div class="error-icon">⚠</div>
+            {{ error() }}
+          </div>
         }
 
-        <form (ngSubmit)="login()">
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              [(ngModel)]="email"
-              name="email"
-              required
-              placeholder="Enter your email"
-            />
-          </div>
+        <form (ngSubmit)="login()" class="login-form">
+          <app-input
+            label="Email Address"
+            type="email"
+            placeholder="Enter your email"
+            [(ngModel)]="email"
+            name="email"
+            [error]="error() ? 'Invalid credentials' : null"
+            required
+          />
 
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              [(ngModel)]="password"
-              name="password"
-              required
-              placeholder="Enter your password"
-            />
-          </div>
+          <app-input
+            label="Password"
+            type="password"
+            placeholder="Enter your password"
+            [(ngModel)]="password"
+            name="password"
+            [error]="error() ? 'Invalid credentials' : null"
+            required
+          />
 
-          <button type="submit" class="btn-login" [disabled]="loading()">
-            {{ loading() ? 'Logging in...' : 'Login' }}
-          </button>
+          <app-button
+            type="submit"
+            variant="default"
+            size="lg"
+            [loading]="loading()"
+            [disabled]="loading()"
+            class="login-button"
+          >
+            {{ loading() ? 'Authenticating...' : 'Access Dashboard' }}
+          </app-button>
         </form>
 
-        <p class="register-link">
-          Don't have an account? <a href="/register">Register</a>
-        </p>
-      </div>
+        <div class="login-footer">
+          <p class="register-link">
+            New to IoT Nexus? <a href="/register" class="gradient-text">Create Account</a>
+          </p>
+        </div>
+      </app-card>
     </div>
   `,
   styles: [`
@@ -66,104 +90,181 @@ import { AuthService } from '../../core/services/auth.service';
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, hsl(142.1 76.2% 36.3% / 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, hsl(280 100% 70% / 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, hsl(200 100% 50% / 0.1) 0%, transparent 50%);
+      z-index: -1;
+    }
+
+    .floating-shapes {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .shape {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      opacity: 0.1;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .shape-1 {
+      width: 80px;
+      height: 80px;
+      top: 20%;
+      left: 10%;
+      animation-delay: 0s;
+    }
+
+    .shape-2 {
+      width: 120px;
+      height: 120px;
+      top: 60%;
+      right: 15%;
+      animation-delay: 2s;
+    }
+
+    .shape-3 {
+      width: 60px;
+      height: 60px;
+      bottom: 20%;
+      left: 20%;
+      animation-delay: 4s;
     }
 
     .login-card {
-      background: white;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
+      padding: 2.5rem;
+      position: relative;
+      z-index: 1;
     }
 
-    h1 {
-      margin: 0 0 10px 0;
-      color: #2c3e50;
-      font-size: 24px;
+    .login-header {
       text-align: center;
+      margin-bottom: 2rem;
     }
 
-    h2 {
-      margin: 0 0 30px 0;
-      color: #7f8c8d;
-      font-size: 18px;
-      text-align: center;
-      font-weight: normal;
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .logo-icon {
+      font-size: 2rem;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .login-subtitle {
+      color: hsl(var(--muted-foreground));
+      font-size: 0.875rem;
+      margin: 0;
     }
 
     .error-message {
-      background: #fee;
-      color: #c33;
-      padding: 12px;
-      border-radius: 4px;
-      margin-bottom: 20px;
-      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: hsl(var(--destructive) / 0.1);
+      color: hsl(var(--destructive));
+      padding: 0.75rem;
+      border-radius: var(--radius);
+      margin-bottom: 1.5rem;
+      font-size: 0.875rem;
+      border: 1px solid hsl(var(--destructive) / 0.2);
     }
 
-    .form-group {
-      margin-bottom: 20px;
+    .error-icon {
+      font-size: 1rem;
     }
 
-    label {
-      display: block;
-      margin-bottom: 8px;
-      color: #2c3e50;
-      font-weight: 500;
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
     }
 
-    input {
+    .login-button {
       width: 100%;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-      box-sizing: border-box;
+      margin-top: 0.5rem;
     }
 
-    input:focus {
-      outline: none;
-      border-color: #667eea;
-    }
-
-    .btn-login {
-      width: 100%;
-      padding: 14px;
-      background: #667eea;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    .btn-login:hover:not(:disabled) {
-      background: #5568d3;
-    }
-
-    .btn-login:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    .login-footer {
+      text-align: center;
     }
 
     .register-link {
-      text-align: center;
-      margin-top: 20px;
-      color: #7f8c8d;
+      color: hsl(var(--muted-foreground));
+      font-size: 0.875rem;
+      margin: 0;
     }
 
     .register-link a {
-      color: #667eea;
-      text-decoration: none;
       font-weight: 600;
+      transition: all 0.2s ease;
     }
 
     .register-link a:hover {
-      text-decoration: underline;
+      text-shadow: 0 0 10px hsl(var(--primary) / 0.5);
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      33% {
+        transform: translateY(-20px) rotate(120deg);
+      }
+      66% {
+        transform: translateY(10px) rotate(240deg);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.8;
+      }
+      50% {
+        transform: scale(1.1);
+        opacity: 1;
+      }
+    }
+
+    /* Responsive design */
+    @media (max-width: 480px) {
+      .login-card {
+        padding: 1.5rem;
+        margin: 1rem;
+      }
+      
+      .logo {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .logo-icon {
+        font-size: 1.5rem;
+      }
     }
   `]
 })
