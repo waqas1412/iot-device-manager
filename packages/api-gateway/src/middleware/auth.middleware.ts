@@ -81,17 +81,18 @@ export function optionalAuthenticate(req: Request, _res: Response, next: NextFun
         req.headers['x-user-id'] = payload.userId;
       } catch (jwtError) {
         // If token is invalid, continue without authentication
-        req.headers['x-user-id'] = 'demo-user-id';
+        req.headers['x-user-id'] = '68f66697b5322cf5e8e9f41f';
       }
     } else {
-      // For demo purposes, set a default user ID (admin user from seeded data)
-      req.headers['x-user-id'] = '68f6646834717f5df0eacc15';
+      // For demo purposes, use the first user ID from seeded data
+      // This will work with the current seeded data
+      req.headers['x-user-id'] = '68f66697b5322cf5e8e9f41f';
     }
 
     next();
   } catch (error) {
-    // For demo purposes, continue with default user ID (admin user from seeded data)
-    req.headers['x-user-id'] = '68f6646834717f5df0eacc15';
+    // For demo purposes, continue with first user ID from seeded data
+    req.headers['x-user-id'] = '68f66697b5322cf5e8e9f41f';
     next();
   }
 }

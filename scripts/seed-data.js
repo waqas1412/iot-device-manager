@@ -21,6 +21,15 @@ const saltRounds = 10;
 
 const users = [
   {
+    _id: ObjectId('507f1f77bcf86cd799439011'), // Fixed ID for demo user
+    email: 'demo@iot.com',
+    username: 'demo_user',
+    password: '$2b$10$rKJ5VqxW8Y.ZQqZ5qZ5qZOqZ5qZ5qZ5qZ5qZ5qZ5qZ5qZ5qZ5qZ5q', // 'demo123'
+    role: 'user',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
     email: 'admin@iot.com',
     username: 'admin',
     password: '$2b$10$rKJ5VqxW8Y.ZQqZ5qZ5qZOqZ5qZ5qZ5qZ5qZ5qZ5qZ5qZ5qZ5qZ5q', // 'admin123'
@@ -35,24 +44,19 @@ const users = [
     role: 'user',
     createdAt: new Date(),
     updatedAt: new Date()
-  },
-  {
-    email: 'demo@iot.com',
-    username: 'demo_user',
-    password: '$2b$10$rKJ5VqxW8Y.ZQqZ5qZ5qZOqZ5qZ5qZ5qZ5qZ5qZ5qZ5qZ5qZ5qZ5q', // 'demo123'
-    role: 'user',
-    createdAt: new Date(),
-    updatedAt: new Date()
   }
 ];
 
 const insertedUsers = db.users.insertMany(users);
 const userIds = Object.values(insertedUsers.insertedIds);
 
+// Use the fixed demo user ID for all devices
+const demoUserId = '507f1f77bcf86cd799439011';
+
 print(`✅ Created ${userIds.length} users`);
+print(`   - demo@iot.com (password: demo123) - ID: ${demoUserId}`);
 print(`   - admin@iot.com (password: admin123)`);
 print(`   - user@iot.com (password: user123)`);
-print(`   - demo@iot.com (password: demo123)`);
 
 // Create devices
 print('🔌 Creating devices...');
@@ -70,7 +74,7 @@ for (let i = 1; i <= 15; i++) {
     name: `Temperature Sensor ${i}`,
     type: 'sensor',
     status: deviceStatuses[Math.floor(Math.random() * deviceStatuses.length)],
-    userId: userIds[Math.floor(Math.random() * userIds.length)].toString(),
+    userId: demoUserId,
     metadata: {
       manufacturer: manufacturers[Math.floor(Math.random() * manufacturers.length)],
       model: `TS-${100 + i}`,
@@ -99,7 +103,7 @@ for (let i = 1; i <= 10; i++) {
     name: `Humidity Sensor ${i}`,
     type: 'sensor',
     status: deviceStatuses[Math.floor(Math.random() * deviceStatuses.length)],
-    userId: userIds[Math.floor(Math.random() * userIds.length)].toString(),
+    userId: demoUserId,
     metadata: {
       manufacturer: manufacturers[Math.floor(Math.random() * manufacturers.length)],
       model: `HS-${200 + i}`,
@@ -128,7 +132,7 @@ for (let i = 1; i <= 8; i++) {
     name: `Smart Actuator ${i}`,
     type: 'actuator',
     status: deviceStatuses[Math.floor(Math.random() * deviceStatuses.length)],
-    userId: userIds[Math.floor(Math.random() * userIds.length)].toString(),
+    userId: demoUserId,
     metadata: {
       manufacturer: manufacturers[Math.floor(Math.random() * manufacturers.length)],
       model: `ACT-${300 + i}`,
@@ -154,7 +158,7 @@ for (let i = 1; i <= 5; i++) {
     name: `IoT Gateway ${i}`,
     type: 'gateway',
     status: deviceStatuses[Math.floor(Math.random() * deviceStatuses.length)],
-    userId: userIds[Math.floor(Math.random() * userIds.length)].toString(),
+    userId: demoUserId,
     metadata: {
       manufacturer: manufacturers[Math.floor(Math.random() * manufacturers.length)],
       model: `GW-${400 + i}`,
@@ -181,7 +185,7 @@ for (let i = 1; i <= 7; i++) {
     name: `Controller ${i}`,
     type: 'controller',
     status: deviceStatuses[Math.floor(Math.random() * deviceStatuses.length)],
-    userId: userIds[Math.floor(Math.random() * userIds.length)].toString(),
+    userId: demoUserId,
     metadata: {
       manufacturer: manufacturers[Math.floor(Math.random() * manufacturers.length)],
       model: `CTRL-${500 + i}`,
