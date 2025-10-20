@@ -6,7 +6,7 @@
 import axios from 'axios';
 import WebSocket from 'ws';
 
-const API_URL = process.env.API_URL || 'http://localhost:3000/api';
+const API_URL = process.env.API_URL || 'http://localhost:3000';
 const WS_URL = process.env.WS_URL || 'ws://localhost:3003';
 
 interface DeviceConfig {
@@ -98,6 +98,7 @@ class SimulatedDevice {
           headers: {
             Authorization: `Bearer ${this.accessToken}`,
           },
+          timeout: 10000, // 10 second timeout
         }
       );
 
@@ -167,6 +168,7 @@ class SimulatedDevice {
           headers: {
             Authorization: `Bearer ${this.accessToken}`,
           },
+          timeout: 10000, // 10 second timeout
         }
       );
 

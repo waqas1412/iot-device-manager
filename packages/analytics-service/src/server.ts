@@ -21,8 +21,8 @@ function createApp(): Application {
   const app = express();
 
   app.use(cors({ origin: '*' }));
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
   // Dependency injection
   const analyticsService = new AnalyticsService();
@@ -53,6 +53,9 @@ async function startServer(): Promise<void> {
     const server = app.listen(port, () => {
       logger.info(`Analytics Service running on port ${port}`);
     });
+
+    // Set server timeout
+    server.timeout = 30000; // 30 seconds
 
     const shutdown = async (): Promise<void> => {
       logger.info('Shutting down gracefully...');

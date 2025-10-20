@@ -34,8 +34,8 @@ router.use(
   createProxyMiddleware({
     target: config.services.device, // Default target
     changeOrigin: true,
-    timeout: 30000, // 30 second timeout
-    proxyTimeout: 30000,
+    timeout: 15000, // 15 second timeout
+    proxyTimeout: 15000,
     router: (req: Request) => {
       // Route to appropriate service based on path
       if (req.path.startsWith('/devices')) {
@@ -64,6 +64,12 @@ router.use(
               message: 'Service temporarily unavailable',
             },
           });
+        }
+      },
+      proxyReq: (proxyReq: any, req: Request) => {
+        // Ensure x-user-id header is forwarded for GET requests
+        if (req.headers['x-user-id']) {
+          proxyReq.setHeader('x-user-id', req.headers['x-user-id']);
         }
       },
     },

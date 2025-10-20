@@ -85,13 +85,13 @@ export function optionalAuthenticate(req: Request, _res: Response, next: NextFun
       }
     } else {
       // For demo purposes, set a default user ID (admin user from seeded data)
-      req.headers['x-user-id'] = '68f6508fa4c571173d7e7e2d';
+      req.headers['x-user-id'] = '68f6646834717f5df0eacc15';
     }
 
     next();
   } catch (error) {
     // For demo purposes, continue with default user ID (admin user from seeded data)
-    req.headers['x-user-id'] = '68f6508fa4c571173d7e7e2d';
+    req.headers['x-user-id'] = '68f6646834717f5df0eacc15';
     next();
   }
 }
