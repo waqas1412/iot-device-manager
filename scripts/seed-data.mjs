@@ -124,7 +124,7 @@ async function seedDatabase() {
         name: `${type.charAt(0).toUpperCase() + type.slice(1)} Sensor ${i}`,
         type,
         status,
-        userId: adminUserId,
+        userId: adminUserId.toString(),
         metadata: {
           manufacturer: manufacturers[i % manufacturers.length],
           model: `Model-${type.toUpperCase()}-${i}`,

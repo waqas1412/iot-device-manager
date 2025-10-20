@@ -12,7 +12,7 @@ import { Logger } from '@iot-dm/shared';
 
 import { config } from './config/index.js';
 import { swaggerSpec } from './config/swagger.js';
-import { errorHandler, notFoundHandler, rateLimiter, requestLogger } from './middleware/index.js';
+import { errorHandler, notFoundHandler, rateLimiter, requestLogger, optionalAuthenticate } from './middleware/index.js';
 import routes from './routes/index.js';
 
 const logger = new Logger('APIGateway');
@@ -40,6 +40,7 @@ function createApp(): Application {
   // Custom middleware
   app.use(requestLogger);
   app.use(rateLimiter);
+  app.use(optionalAuthenticate);
 
   // Swagger API Documentation
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
