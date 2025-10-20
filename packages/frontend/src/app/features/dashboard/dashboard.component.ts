@@ -10,75 +10,194 @@ import { RouterModule } from '@angular/router';
 import { DeviceService } from '../devices/services/device.service';
 import { WebSocketService } from '../../core/services/websocket.service';
 import { AuthService } from '../../core/services/auth.service';
+import { ButtonComponent } from '../../shared/components/button/button.component';
+import { CardComponent } from '../../shared/components/card/card.component';
+import { BadgeComponent } from '../../shared/components/badge/badge.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ButtonComponent, CardComponent, BadgeComponent],
   template: `
     <div class="dashboard">
+      <!-- Header Section -->
       <header class="dashboard-header">
-        <h1>IoT Device Manager</h1>
-        <div class="user-info">
-          @if (auth.currentUser(); as user) {
-            <span>{{ user.username }}</span>
-            <button (click)="logout()" class="btn-logout">Logout</button>
-          }
+        <div class="header-content">
+          <div class="header-left">
+            <div class="logo">
+              <div class="logo-icon">⚡</div>
+              <h1 class="gradient-text">IoT Nexus</h1>
+            </div>
+            <p class="header-subtitle">Device Management Dashboard</p>
+          </div>
+          <div class="header-right">
+            @if (auth.currentUser(); as user) {
+              <div class="user-profile">
+                <div class="user-avatar">
+                  <span>{{ user.username.charAt(0).toUpperCase() }}</span>
+                </div>
+                <div class="user-details">
+                  <span class="username">{{ user.username }}</span>
+                  <span class="user-role">Administrator</span>
+                </div>
+                <app-button 
+                  variant="outline" 
+                  size="sm" 
+                  (onClick)="logout()"
+                  class="logout-btn"
+                >
+                  Logout
+                </app-button>
+              </div>
+            }
+          </div>
         </div>
       </header>
 
+      <!-- Stats Grid -->
       <div class="dashboard-stats">
-        <div class="stat-card">
-          <h3>Total Devices</h3>
-          <p class="stat-value">{{ deviceService.devices().length }}</p>
-        </div>
-        <div class="stat-card">
-          <h3>Online Devices</h3>
-          <p class="stat-value">{{ onlineDevices() }}</p>
-        </div>
-        <div class="stat-card">
-          <h3>Offline Devices</h3>
-          <p class="stat-value">{{ offlineDevices() }}</p>
-        </div>
-        <div class="stat-card">
-          <h3>WebSocket Status</h3>
-          <p class="stat-value" [class.connected]="ws.connected()">
-            {{ ws.connected() ? 'Connected' : 'Disconnected' }}
-          </p>
-        </div>
+        <app-card class="stat-card" [glow]="true" [floating]="true">
+          <div class="stat-content">
+            <div class="stat-icon">📱</div>
+            <div class="stat-info">
+              <h3>Total Devices</h3>
+              <p class="stat-value">{{ deviceService.devices().length }}</p>
+            </div>
+          </div>
+        </app-card>
+
+        <app-card class="stat-card" [glow]="true" [floating]="true">
+          <div class="stat-content">
+            <div class="stat-icon online">🟢</div>
+            <div class="stat-info">
+              <h3>Online Devices</h3>
+              <p class="stat-value online">{{ onlineDevices() }}</p>
+            </div>
+          </div>
+        </app-card>
+
+        <app-card class="stat-card" [glow]="true" [floating]="true">
+          <div class="stat-content">
+            <div class="stat-icon offline">🔴</div>
+            <div class="stat-info">
+              <h3>Offline Devices</h3>
+              <p class="stat-value offline">{{ offlineDevices() }}</p>
+            </div>
+          </div>
+        </app-card>
+
+        <app-card class="stat-card" [glow]="true" [floating]="true">
+          <div class="stat-content">
+            <div class="stat-icon" [class.connected]="ws.connected()">
+              {{ ws.connected() ? '🔗' : '🔌' }}
+            </div>
+            <div class="stat-info">
+              <h3>Connection Status</h3>
+              <p class="stat-value" [class.connected]="ws.connected()">
+                {{ ws.connected() ? 'Connected' : 'Disconnected' }}
+              </p>
+            </div>
+          </div>
+        </app-card>
       </div>
 
-      <div class="device-list">
-        <div class="list-header">
-          <h2>Devices</h2>
-          <button (click)="refreshDevices()" class="btn-refresh" [disabled]="deviceService.loading()">
-            {{ deviceService.loading() ? 'Loading...' : 'Refresh' }}
-          </button>
+      <!-- Device List Section -->
+      <div class="device-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>Device Network</h2>
+            <p class="section-subtitle">Monitor and manage your IoT ecosystem</p>
+          </div>
+          <app-button 
+            variant="default" 
+            size="default"
+            [loading]="deviceService.loading()"
+            [disabled]="deviceService.loading()"
+            (onClick)="refreshDevices()"
+            class="refresh-btn"
+          >
+            {{ deviceService.loading() ? 'Syncing...' : 'Refresh Network' }}
+          </app-button>
         </div>
 
         @if (deviceService.loading()) {
-          <p class="loading">Loading devices...</p>
+          <app-card class="loading-card" [glass]="true">
+            <div class="loading-content">
+              <div class="loading-spinner"></div>
+              <p>Scanning device network...</p>
+            </div>
+          </app-card>
         } @else if (deviceService.devices().length === 0) {
-          <p class="empty">No devices found. Create your first device!</p>
+          <app-card class="empty-card" [glass]="true">
+            <div class="empty-content">
+              <div class="empty-icon">🔍</div>
+              <h3>No Devices Found</h3>
+              <p>Your IoT network is empty. Start by adding your first device to begin monitoring.</p>
+              <app-button variant="default" size="lg" class="add-device-btn">
+                Add First Device
+              </app-button>
+            </div>
+          </app-card>
         } @else {
           <div class="devices-grid">
             @for (device of deviceService.devices(); track device.id) {
-              <div class="device-card" [class]="'status-' + device.status">
+              <app-card 
+                class="device-card" 
+                [interactive]="true"
+                [glow]="device.status === 'online'"
+                [class]="'device-card status-' + device.status"
+              >
                 <div class="device-header">
-                  <h3>{{ device.name }}</h3>
-                  <span class="device-status">{{ device.status }}</span>
+                  <div class="device-title">
+                    <h3>{{ device.name }}</h3>
+                    <app-badge 
+                      [variant]="getStatusVariant(device.status)"
+                      [pulse]="device.status === 'online'"
+                    >
+                      {{ device.status }}
+                    </app-badge>
+                  </div>
+                  <div class="device-actions">
+                    <button class="action-btn" title="View Details">👁</button>
+                    <button class="action-btn" title="Configure">⚙️</button>
+                  </div>
                 </div>
+                
                 <div class="device-info">
-                  <p><strong>Type:</strong> {{ device.type }}</p>
-                  <p><strong>ID:</strong> {{ device.id }}</p>
+                  <div class="info-row">
+                    <span class="info-label">Type</span>
+                    <span class="info-value">{{ device.type }}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Device ID</span>
+                    <span class="info-value device-id">{{ device.id }}</span>
+                  </div>
                   @if (device.metadata?.manufacturer) {
-                    <p><strong>Manufacturer:</strong> {{ device.metadata?.manufacturer }}</p>
+                    <div class="info-row">
+                      <span class="info-label">Manufacturer</span>
+                      <span class="info-value">{{ device.metadata?.manufacturer }}</span>
+                    </div>
                   }
                   @if (device.lastSeenAt) {
-                    <p><strong>Last Seen:</strong> {{ formatDate(device.lastSeenAt) }}</p>
+                    <div class="info-row">
+                      <span class="info-label">Last Seen</span>
+                      <span class="info-value">{{ formatDate(device.lastSeenAt) }}</span>
+                    </div>
                   }
                 </div>
-              </div>
+
+                <div class="device-footer">
+                  <div class="signal-strength">
+                    <span class="signal-label">Signal</span>
+                    <div class="signal-bars">
+                      <div class="bar" [class.active]="device.status === 'online'"></div>
+                      <div class="bar" [class.active]="device.status === 'online'"></div>
+                      <div class="bar" [class.active]="device.status === 'online'"></div>
+                      <div class="bar" [class.active]="device.status === 'online'"></div>
+                    </div>
+                  </div>
+                </div>
+              </app-card>
             }
           </div>
         }
@@ -87,166 +206,396 @@ import { AuthService } from '../../core/services/auth.service';
   `,
   styles: [`
     .dashboard {
-      padding: 20px;
+      padding: 2rem;
       max-width: 1400px;
       margin: 0 auto;
+      min-height: 100vh;
     }
 
+    /* Header Styles */
     .dashboard-header {
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid hsl(var(--border));
+    }
+
+    .header-content {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 30px;
-      padding-bottom: 20px;
-      border-bottom: 2px solid #e0e0e0;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
-    .dashboard-header h1 {
-      margin: 0;
-      color: #2c3e50;
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
     }
 
-    .user-info {
+    .logo {
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 0.75rem;
     }
 
-    .btn-logout {
-      padding: 8px 16px;
-      background: #e74c3c;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
+    .logo-icon {
+      font-size: 2rem;
+      animation: pulse 2s ease-in-out infinite;
     }
 
-    .btn-logout:hover {
-      background: #c0392b;
+    .header-subtitle {
+      color: hsl(var(--muted-foreground));
+      font-size: 0.875rem;
+      margin: 0;
     }
 
+    .header-right {
+      display: flex;
+      align-items: center;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem;
+      background: hsl(var(--muted) / 0.3);
+      border-radius: var(--radius);
+      border: 1px solid hsl(var(--border));
+    }
+
+    .user-avatar {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: hsl(var(--primary-foreground));
+    }
+
+    .user-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .username {
+      font-weight: 600;
+      color: hsl(var(--foreground));
+    }
+
+    .user-role {
+      font-size: 0.75rem;
+      color: hsl(var(--muted-foreground));
+    }
+
+    /* Stats Grid */
     .dashboard-stats {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
     }
 
     .stat-card {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 1.5rem;
     }
 
-    .stat-card h3 {
-      margin: 0 0 10px 0;
-      color: #7f8c8d;
-      font-size: 14px;
+    .stat-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .stat-icon {
+      font-size: 2rem;
+      opacity: 0.8;
+    }
+
+    .stat-icon.connected {
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .stat-info h3 {
+      margin: 0 0 0.5rem 0;
+      color: hsl(var(--muted-foreground));
+      font-size: 0.875rem;
       text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
     .stat-value {
       margin: 0;
-      font-size: 32px;
-      font-weight: bold;
-      color: #2c3e50;
+      font-size: 2rem;
+      font-weight: 700;
+      color: hsl(var(--foreground));
+    }
+
+    .stat-value.online {
+      color: hsl(142.1 76.2% 36.3%);
+    }
+
+    .stat-value.offline {
+      color: hsl(var(--destructive));
     }
 
     .stat-value.connected {
-      color: #27ae60;
+      color: hsl(142.1 76.2% 36.3%);
     }
 
-    .list-header {
+    /* Device Section */
+    .device-section {
+      margin-top: 2rem;
+    }
+
+    .section-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
+      align-items: flex-start;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
-    .list-header h2 {
+    .section-title h2 {
+      margin: 0 0 0.5rem 0;
+      color: hsl(var(--foreground));
+    }
+
+    .section-subtitle {
+      color: hsl(var(--muted-foreground));
+      font-size: 0.875rem;
       margin: 0;
-      color: #2c3e50;
     }
 
-    .btn-refresh {
-      padding: 10px 20px;
-      background: #3498db;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
+    /* Loading and Empty States */
+    .loading-card, .empty-card {
+      padding: 3rem;
+      text-align: center;
     }
 
-    .btn-refresh:hover:not(:disabled) {
-      background: #2980b9;
+    .loading-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
     }
 
-    .btn-refresh:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    .loading-spinner {
+      width: 2rem;
+      height: 2rem;
+      border: 2px solid hsl(var(--muted));
+      border-top: 2px solid hsl(var(--primary));
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
     }
 
+    .empty-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      opacity: 0.5;
+    }
+
+    .empty-content h3 {
+      margin: 0;
+      color: hsl(var(--foreground));
+    }
+
+    .empty-content p {
+      color: hsl(var(--muted-foreground));
+      margin: 0;
+    }
+
+    /* Device Grid */
     .devices-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
     }
 
     .device-card {
-      background: white;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      border-left: 4px solid #95a5a6;
+      padding: 1.5rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .device-card.status-online {
-      border-left-color: #27ae60;
-    }
-
-    .device-card.status-offline {
-      border-left-color: #e74c3c;
-    }
-
-    .device-card.status-error {
-      border-left-color: #e67e22;
+    .device-card:hover {
+      transform: translateY(-4px);
     }
 
     .device-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
     }
 
-    .device-header h3 {
+    .device-title {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .device-title h3 {
       margin: 0;
-      color: #2c3e50;
+      color: hsl(var(--foreground));
+      font-size: 1.125rem;
     }
 
-    .device-status {
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: bold;
-      text-transform: uppercase;
-      background: #ecf0f1;
-      color: #7f8c8d;
+    .device-actions {
+      display: flex;
+      gap: 0.5rem;
     }
 
-    .device-info p {
-      margin: 8px 0;
-      color: #7f8c8d;
-      font-size: 14px;
+    .action-btn {
+      width: 2rem;
+      height: 2rem;
+      border: none;
+      background: hsl(var(--muted));
+      color: hsl(var(--muted-foreground));
+      border-radius: 0.375rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .loading, .empty {
-      text-align: center;
-      padding: 40px;
-      color: #7f8c8d;
+    .action-btn:hover {
+      background: hsl(var(--accent));
+      color: hsl(var(--accent-foreground));
+    }
+
+    /* Device Info */
+    .device-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .info-label {
+      color: hsl(var(--muted-foreground));
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .info-value {
+      color: hsl(var(--foreground));
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .device-id {
+      font-family: 'Monaco', 'Menlo', monospace;
+      background: hsl(var(--muted) / 0.3);
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+    }
+
+    /* Device Footer */
+    .device-footer {
+      border-top: 1px solid hsl(var(--border));
+      padding-top: 1rem;
+    }
+
+    .signal-strength {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .signal-label {
+      color: hsl(var(--muted-foreground));
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .signal-bars {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .bar {
+      width: 0.25rem;
+      height: 0.75rem;
+      background: hsl(var(--muted));
+      border-radius: 0.125rem;
+      transition: all 0.3s ease;
+    }
+
+    .bar.active {
+      background: hsl(var(--primary));
+      box-shadow: 0 0 4px hsl(var(--primary) / 0.5);
+    }
+
+    .bar:nth-child(1) { height: 0.5rem; }
+    .bar:nth-child(2) { height: 0.75rem; }
+    .bar:nth-child(3) { height: 1rem; }
+    .bar:nth-child(4) { height: 1.25rem; }
+
+    /* Animations */
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.7;
+        transform: scale(1.05);
+      }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .dashboard {
+        padding: 1rem;
+      }
+
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .user-profile {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .dashboard-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .devices-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
     }
   `]
 })
@@ -293,6 +642,19 @@ export class DashboardComponent implements OnInit {
 
   logout() {
     this.auth.logout();
+  }
+
+  getStatusVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning' {
+    switch (status) {
+      case 'online':
+        return 'success';
+      case 'offline':
+        return 'destructive';
+      case 'error':
+        return 'warning';
+      default:
+        return 'secondary';
+    }
   }
 }
 

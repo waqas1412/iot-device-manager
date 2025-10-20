@@ -1,0 +1,10 @@
+.app-container {
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Loading animation for route transitions */
+router-outlet + * {
+  animation: slideIn 0.5s ease-out;
+}
